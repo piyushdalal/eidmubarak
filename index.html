@@ -124,7 +124,6 @@ button {
     filter: drop-shadow(0 0 6px rgba(255,140,180,0.5));
 }
 
-/* Normal fall */
 @keyframes petalFall {
     to {
         transform: translateY(120vh) rotate(260deg);
@@ -132,21 +131,62 @@ button {
     }
 }
 
-/* 🌪️ Swirl inward after YES */
+/* 🌪️ Swirl inward */
 .swirl {
     animation: swirlIn 2.8s ease-in forwards !important;
 }
 
 @keyframes swirlIn {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 1;
-    }
+    0% { opacity: 1; }
     100% {
         transform: translate(
             calc(50vw - var(--x)),
             calc(50vh - var(--y))
         ) rotate(720deg) scale(0.2);
+        opacity: 0;
+    }
+}
+
+/* 💛 FINAL SCREEN */
+.final-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.final-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45);
+    z-index: -2;
+}
+
+.final-text {
+    color: white;
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    z-index: 2;
+}
+
+/* ✨ Emoji Shower */
+.emoji {
+    position: fixed;
+    top: -5%;
+    pointer-events: none;
+    animation: emojiFall 5s linear forwards;
+    z-index: 3;
+}
+
+@keyframes emojiFall {
+    to {
+        transform: translateY(110vh);
         opacity: 0;
     }
 }
@@ -210,7 +250,7 @@ nextBtn.onclick = () => {
     }
 };
 
-/* 🌸 Edge-focused petal creation */
+/* 🌸 Petals */
 const petals = ["🌸","🌹","🍃"];
 let swirlMode = false;
 
@@ -219,33 +259,18 @@ function createPetal() {
     p.className = "petal";
     p.innerText = petals[Math.floor(Math.random()*petals.length)];
 
-    const edge = Math.random() < 0.5;
-    const x = edge ? Math.random()*20 : 80 + Math.random()*20;
-    const y = Math.random()*window.innerHeight;
-
+    const x = Math.random() < 0.5 ? Math.random()*20 : 80 + Math.random()*20;
     p.style.left = x + "vw";
     p.style.fontSize = Math.random()*12 + 22 + "px";
     p.style.animationDuration = Math.random()*4 + 6 + "s";
-
     p.style.setProperty("--x", x + "vw");
-    p.style.setProperty("--y", y + "px");
+    p.style.setProperty("--y", Math.random()*window.innerHeight + "px");
 
     document.body.appendChild(p);
-
-    if (swirlMode) {
-        setTimeout(() => p.classList.add("swirl"), 50);
-    }
-
+    if (swirlMode) setTimeout(() => p.classList.add("swirl"), 50);
     setTimeout(() => p.remove(), 10000);
 }
-
 setInterval(createPetal, 700);
-
-/* No button */
-document.getElementById("no").onmouseover = () => {
-    noBtn.style.transform =
-        `translate(${Math.random()*200-100}px,${Math.random()*100-50}px)`;
-};
 
 /* Confetti */
 function launchConfetti() {
@@ -260,25 +285,41 @@ function launchConfetti() {
     }
 }
 
+/* ✨ Emoji shower */
+const emojis = ["💛","✨","💫","🫶","🤍","🌙"];
+function emojiShower() {
+    const e = document.createElement("div");
+    e.className = "emoji";
+    e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+
+    const x = Math.random()*100;
+    if (x > 40 && x < 60 && Math.random() < 0.6) return;
+
+    e.style.left = x + "vw";
+    e.style.fontSize = Math.random()*10 + 14 + "px";
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),5200);
+}
+setInterval(emojiShower, 160);
+
 /* YES */
 document.getElementById("yes").onclick = () => {
     document.getElementById("bgMusic").play();
-    bg.style.filter="grayscale(0%)";
     swirlMode = true;
     launchConfetti();
 
-    document.querySelectorAll(".petal").forEach(p => {
-        p.classList.add("swirl");
-    });
-
     setTimeout(()=>{
-        document.body.innerHTML=`
-        <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:rgba(0,0,0,0.4);">
-        <h1 style="color:white;text-align:center;">
-        I’m really glad it’s YOU I found 💕<br><br>
-        I’ll always treat you like my lil baby<br><br>
-        — Piushu
-        </h1></div>`;
+        document.body.innerHTML = `
+        <div class="final-screen">
+            <video class="final-video" autoplay muted loop playsinline>
+                <source src="assets/bg.mp4" type="video/mp4">
+            </video>
+            <div class="final-text">
+                I am really glad it’s you I found 💕<br><br>
+                I’ll always treat you like my lil baby<br><br>
+                — Piushu
+            </div>
+        </div>`;
     },1200);
 };
 </script>

@@ -32,32 +32,27 @@ body {
     to { transform: scale(1.1); }
 }
 
-/* Vignette + dark overlay */
+/* Vignette */
 .overlay {
     position: fixed;
     inset: 0;
     background:
-        radial-gradient(
-            ellipse at center,
-            rgba(0,0,0,0) 55%,
-            rgba(0,0,0,0.45) 100%
-        ),
+        radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%),
         rgba(0,0,0,0.22);
     z-index: 1;
 }
 
-/* Card (lighter glass effect — ONLY CHANGE) */
+/* Card */
 .card {
     position: relative;
     background: rgba(255,255,255,0.60);
     backdrop-filter: blur(3px);
-    width: 100%;
     max-width: 420px;
-    border-radius: 22px;
     padding: 28px;
+    border-radius: 22px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     z-index: 2;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
 .heart {
@@ -80,23 +75,13 @@ body {
 
 button {
     padding: 12px 24px;
-    border: none;
     border-radius: 999px;
+    border: none;
     font-size: 16px;
     cursor: pointer;
 }
 
-#next {
-    background: #ff5c8a;
-    color: white;
-}
-
-.buttons {
-    position: relative;
-    height: 70px;
-}
-
-#yes {
+#next, #yes {
     background: #ff5c8a;
     color: white;
 }
@@ -107,20 +92,61 @@ button {
     right: 0;
 }
 
+.buttons {
+    height: 70px;
+    position: relative;
+}
+
 /* Confetti */
 .confetti {
     position: fixed;
     top: -10px;
     width: 8px;
     height: 14px;
-    opacity: 0.8;
     animation: fall 3s linear forwards;
-    z-index: 3;
+    z-index: 4;
 }
 
 @keyframes fall {
     to {
         transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 🌸 Petals */
+.petal {
+    position: fixed;
+    top: -10%;
+    pointer-events: none;
+    z-index: 3;
+    animation: petalFall linear forwards;
+    filter: drop-shadow(0 0 6px rgba(255,140,180,0.5));
+}
+
+/* Normal fall */
+@keyframes petalFall {
+    to {
+        transform: translateY(120vh) rotate(260deg);
+        opacity: 0;
+    }
+}
+
+/* 🌪️ Swirl inward after YES */
+.swirl {
+    animation: swirlIn 2.8s ease-in forwards !important;
+}
+
+@keyframes swirlIn {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(
+            calc(50vw - var(--x)),
+            calc(50vh - var(--y))
+        ) rotate(720deg) scale(0.2);
         opacity: 0;
     }
 }
@@ -135,7 +161,6 @@ button {
 <div class="card">
     <div class="heart">💖</div>
     <div class="text" id="text"></div>
-
     <button id="next">Next →</button>
 
     <div class="buttons" id="finalButtons" style="display:none;">
@@ -144,10 +169,11 @@ button {
     </div>
 </div>
 
-<script>
-const backgrounds = ["bg1.jpg", "bg2.jpg", "bg3.jpg"];
-const finalBg = "bg4.jpg";
+<audio id="bgMusic" src="music.mp3" loop></audio>
 
+<script>
+const backgrounds = ["bg1.jpg","bg2.jpg","bg3.jpg"];
+const finalBg = "bg4.jpg";
 const bg = document.getElementById("bg");
 bg.style.backgroundImage = `url(${backgrounds[0]})`;
 
@@ -155,8 +181,8 @@ const scenes = [
   "Hiee babyyy 💗",
   "I know Valentine’s maybe doesn’t mean much to everyone.",
   "And I don’t want this to feel like pressure, expectations, or a big dramatic thing.",
-  "I want you to know that you’re cared for, genuinely and without conditions. So this isn’t really about Valentine’s at all… it’s just about us. So on that note I wanted to ask you one little thing...",
-  "Yaar tu itni stupid kyu hai? Acha jokes apart now the real question..."
+  "This isn’t really about Valentine’s… it’s just about us.",
+  "So I wanted to ask you one little thing..."
 ];
 
 let index = 0;
@@ -165,24 +191,17 @@ const nextBtn = document.getElementById("next");
 const buttons = document.getElementById("finalButtons");
 
 function showScene() {
-    textEl.style.opacity = 0;
-    setTimeout(() => {
-        textEl.innerText = scenes[index];
-        textEl.style.opacity = 1;
-    }, 200);
-
+    textEl.innerText = scenes[index];
     if (index < backgrounds.length) {
         bg.style.backgroundImage = `url(${backgrounds[index]})`;
     }
 }
-
 showScene();
 
 nextBtn.onclick = () => {
     index++;
-    if (index < scenes.length) {
-        showScene();
-    } else {
+    if (index < scenes.length) showScene();
+    else {
         bg.style.backgroundImage = `url(${finalBg})`;
         bg.style.filter = "grayscale(100%)";
         textEl.innerText = "Will you be my Valentine? 🌹";
@@ -191,78 +210,76 @@ nextBtn.onclick = () => {
     }
 };
 
-const noBtn = document.getElementById("no");
-const noTexts = [
-  "Are you sure?",
-  "Think again 😏",
-  "No pressure 💗",
-  "Take your time",
-  "Nice try 🙃",
-  "Okay but… 👀",
-  "You sure about that?",
-  "Hmm…",
-  "Just checking 😌",
-  "Maybe?",
-  "It’s okay to think 💭",
-  "Wrong button 🙈",
-  "Almost!",
-  "Try again 😆",
-  "You can decide later",
-  "No rush at all",
-  "Are you really sure?",
-  "Hehe 😌",
-  "Give it another thought",
-  "Oops 😅",
-  "Still here 💗",
-  "Whenever you’re ready",
-  "Just saying 👀",
-  "That button’s shy",
-  "Think once more",
-  "You don’t have to hurry",
-  "Okay okay 😏",
-  "We’ve got time",
-  "Not today?",
-  "Last check 🙃"
-];
+/* 🌸 Edge-focused petal creation */
+const petals = ["🌸","🌹","🍃"];
+let swirlMode = false;
 
-let noCount = 0;
+function createPetal() {
+    const p = document.createElement("div");
+    p.className = "petal";
+    p.innerText = petals[Math.floor(Math.random()*petals.length)];
 
-noBtn.addEventListener("mouseover", () => {
-    const x = Math.random() * 200 - 100;
-    const y = Math.random() * 100 - 50;
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
-    noBtn.innerText = noTexts[noCount % noTexts.length];
-    noCount++;
-});
+    const edge = Math.random() < 0.5;
+    const x = edge ? Math.random()*20 : 80 + Math.random()*20;
+    const y = Math.random()*window.innerHeight;
 
+    p.style.left = x + "vw";
+    p.style.fontSize = Math.random()*12 + 22 + "px";
+    p.style.animationDuration = Math.random()*4 + 6 + "s";
+
+    p.style.setProperty("--x", x + "vw");
+    p.style.setProperty("--y", y + "px");
+
+    document.body.appendChild(p);
+
+    if (swirlMode) {
+        setTimeout(() => p.classList.add("swirl"), 50);
+    }
+
+    setTimeout(() => p.remove(), 10000);
+}
+
+setInterval(createPetal, 700);
+
+/* No button */
+document.getElementById("no").onmouseover = () => {
+    noBtn.style.transform =
+        `translate(${Math.random()*200-100}px,${Math.random()*100-50}px)`;
+};
+
+/* Confetti */
 function launchConfetti() {
-    for (let i = 0; i < 80; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * 100 + "vw";
-        confetti.style.backgroundColor =
-            ["#ff5c8a", "#ffc1d6", "#ffd1e8"][Math.floor(Math.random() * 3)];
-        confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
-        document.body.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 4000);
+    for (let i=0;i<80;i++) {
+        const c=document.createElement("div");
+        c.className="confetti";
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=["#ff5c8a","#ffc1d6","#ffd1e8"][Math.floor(Math.random()*3)];
+        c.style.animationDuration=2+Math.random()*2+"s";
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),4000);
     }
 }
 
+/* YES */
 document.getElementById("yes").onclick = () => {
-    bg.style.filter = "grayscale(0%)";
+    document.getElementById("bgMusic").play();
+    bg.style.filter="grayscale(0%)";
+    swirlMode = true;
     launchConfetti();
 
-    setTimeout(() => {
-        document.body.innerHTML = `
-            <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:rgba(0,0,0,0.4);text-align:center;padding:20px;">
-                <h1 style="color:white;font-family:sans-serif;">
-                    I’m really glad it’s YOU I found 💕<br><br>
-                    I just want you to know that ill always treat you like my lil baby that you are <br><br>
-                    — Piushu
-                </h1>
-            </div>
-        `;
-    }, 1200);
+    document.querySelectorAll(".petal").forEach(p => {
+        p.classList.add("swirl");
+    });
+
+    setTimeout(()=>{
+        document.body.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:rgba(0,0,0,0.4);">
+        <h1 style="color:white;text-align:center;">
+        I’m really glad it’s YOU I found 💕<br><br>
+        I’ll always treat you like my lil baby<br><br>
+        — Piushu
+        </h1></div>`;
+    },1200);
 };
 </script>
 

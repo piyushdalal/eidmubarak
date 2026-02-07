@@ -40,6 +40,7 @@ body {
         radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%),
         rgba(0,0,0,0.22);
     z-index: 1;
+    pointer-events: none;
 }
 
 /* Card */
@@ -90,6 +91,7 @@ button {
     background: #eee;
     position: absolute;
     right: 0;
+    pointer-events: auto;
 }
 
 .buttons {
@@ -302,9 +304,37 @@ function emojiShower() {
 }
 setInterval(emojiShower, 160);
 
-/* YES */
+/* ❌ NO button logic (30 texts) */
+const noTexts = [
+"No 😤","Absolutely not","Are you serious?","Nope","Try again",
+"Not happening","I refuse","Nice try","Ask again later",
+"That’s a no from me","Nope nope nope","I don’t think so",
+"Hard pass","Definitely not","Dream on","Not today",
+"Maybe in another universe","Lol no","I’m scared 😭",
+"Don’t pressure me","You wish","I plead the fifth",
+"Stop asking 😩","I’m shy","Ask me nicely","I can’t decide",
+"My answer is no","Nope, sorry","This is illegal","…still no"
+];
+
+const noBtn = document.getElementById("no");
+let noIndex = 0;
+
+function moveNo() {
+    noBtn.innerText = noTexts[noIndex % noTexts.length];
+    noIndex++;
+
+    const x = Math.random() * 220;
+    const y = Math.random() * 30;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
+
+/* ❤️ YES */
 document.getElementById("yes").onclick = () => {
     document.getElementById("bgMusic").play();
+    bg.style.filter = "grayscale(0%)";
     swirlMode = true;
     launchConfetti();
 
@@ -320,7 +350,7 @@ document.getElementById("yes").onclick = () => {
                 — Piushu
             </div>
         </div>`;
-    },1200);
+    },7000);
 };
 </script>
 

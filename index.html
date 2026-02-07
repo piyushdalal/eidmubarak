@@ -304,7 +304,7 @@ function emojiShower() {
 }
 setInterval(emojiShower, 160);
 
-/* ❌ NO button logic (30 texts) */
+/* ❌ NO button logic */
 const noTexts = [
 "No 😤","Absolutely not","Are you serious?","Nope","Try again",
 "Not happening","I refuse","Nice try","Ask again later",
@@ -322,7 +322,6 @@ let noIndex = 0;
 function moveNo() {
     noBtn.innerText = noTexts[noIndex % noTexts.length];
     noIndex++;
-
     const x = Math.random() * 220;
     const y = Math.random() * 30;
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
@@ -350,7 +349,7 @@ document.getElementById("yes").onclick = () => {
                 — Piushu
             </div>
         </div>`;
-    },7000);
+    },3000);
 };
 </script>
 
